@@ -1,0 +1,214 @@
+<!doctype html>
+<html class="no-js" lang="en" xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="x-ua-compatible" content="ie=edge">
+    <title>BancABC Payroll - Salaries</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="shortcut icon" type="image/png" href="/images/logo.jpg">
+    <link rel="stylesheet" href="/css/bootstrap.min.css">
+    <link rel="stylesheet" href="/css/font-awesome.min.css">
+    <link rel="stylesheet" href="/css/themify-icons.css">
+    <link rel="stylesheet" href="/css/metisMenu.css">
+    <link rel="stylesheet" href="/css/owl.carousel.min.css">
+    <link rel="stylesheet" href="/css/slicknav.min.css">
+    <!-- amcharts css -->
+    <link rel="stylesheet" href="https://www.amcharts.com/lib/3/plugins/export/export.css" type="text/css" media="all"/>
+    <!-- Start datatable css -->
+    <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/1.10.19/css/jquery.dataTables.css">
+    <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/1.10.18/css/dataTables.bootstrap4.min.css">
+    <link rel="stylesheet" type="text/css"
+          href="https://cdn.datatables.net/responsive/2.2.3/css/responsive.bootstrap.min.css">
+    <link rel="stylesheet" type="text/css"
+          href="https://cdn.datatables.net/responsive/2.2.3/css/responsive.jqueryui.min.css">
+    <!-- style css -->
+    <link rel="stylesheet" href="/css/typography.css">
+    <link rel="stylesheet" href="/css/default-css.css">
+    <link rel="stylesheet" href="/css/styles.css">
+    <!-- modernizr css -->
+    <script src="/js/vendor/modernizr-2.8.3.min.js"></script>
+
+    <!--  Export Data  -->
+    <link href='https://cdn.datatables.net/1.12.1/css/jquery.dataTables.min.css' rel='stylesheet' type='text/css'>
+    <link href='https://cdn.datatables.net/buttons/2.2.3/css/buttons.dataTables.min.css' rel='stylesheet' type='text/css'>
+</head>
+
+<body>
+<div id="preloader">
+    <div class="loader"></div>
+</div>
+<!-- preloader area end -->
+<!-- page container area start -->
+<div class="page-container">
+    <!-- sidebar menu area start -->
+    <div class="sidebar-menu">
+        <div class="sidebar-header">
+            <div class="logo">
+                <a href="home"><img src="/images/logo.jpg" alt="logo" width="50"></a>
+                <b>Payroll System</b>
+            </div>
+        </div>
+        <div class="main-menu">
+            <div class="menu-inner">
+                <nav>
+                    <ul class="metismenu" id="menu">
+                        <li>
+                            <a href="home" aria-expanded="true"><i class="fa fa-home"></i>
+                                <span>Home</span>
+                            </a>
+                        </li>
+                        <li class="active">
+                            <a href="salaries" aria-expanded="true"><i class="fa fa-money"></i>
+                                <span>Salaries</span>
+                            </a>
+                        </li>
+                        <li th:if="${role}=='ADMIN'">
+                            <a href="users" aria-expanded="true"><i class="fa fa-users"></i>
+                                <span>Users</span>
+                            </a>
+                        </li>
+                        <li>
+                            <a href="reports" aria-expanded="true"><i class="fa fa-area-chart"></i>
+                                <span>Reports</span>
+                            </a>
+                        </li>
+                    </ul>
+                </nav>
+            </div>
+        </div>
+    </div>
+    <!-- sidebar menu area end -->
+
+    <!-- main content area start -->
+    <div class="main-content">
+        <!-- page title area start -->
+        <div class="page-title-area">
+            <div class="row align-items-center">
+                <div class="col-sm-6">
+                    <div class="breadcrumbs-area clearfix">
+                        <h4 class="page-title pull-left">Dashboard</h4>
+                        <ul class="breadcrumbs pull-left">
+                            <li><a href="home">Users</a></li>
+                        </ul>
+                    </div>
+                </div>
+                <div class="col-sm-6 clearfix">
+                    <div class="user-profile pull-right">
+                        <img class="avatar user-thumb" src="/images/avatar.png" alt="avatar">
+                        <h4 class="user-name dropdown-toggle" data-toggle="dropdown" sec:authentication="principal.username"> <i
+                                class="fa fa-angle-down"></i></h4>
+                        <div class="dropdown-menu">
+                            <a class="dropdown-item" href="logout">Log Out</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- page title area end -->
+        <div class="main-content-inner">
+            <div class="row">
+                <!-- data table start -->
+                <div class="col-12 mt-5">
+                    <div class="card">
+                        <div class="card-body">
+                            <div class="row mb-3">
+                                <div class="col-6"><h4 class="header-title">All Salaries</h4></div>
+                                <div class="col-6" th:if="${role}=='INITIATOR'">
+                                    <a href="add-salary" class="btn btn-sm float-right"style="background-color: #1c3b6d; color: white;">Add Salary</a>
+                                </div>
+                            </div>
+                            <div class="data-tables">
+                                <table id="salariesTable">
+                                    <thead class="bg-light text-capitalize">
+                                        <tr>
+                                            <th>#</th>
+                                            <th>Payer Name</th>
+                                            <th>Payer Account Number</th>
+                                            <th>Receiver Name</th>
+                                            <th>Receiver Account Number</th>
+                                            <th>Currency</th>
+                                            <th>Amount</th>
+                                            <th>Payment State</th>
+                                            <th>Date Added</th>
+                                            <th>Action</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr th:each = "salary: ${salaries}">
+                                            <td th:text="${salary.getId()}"></td>
+                                            <td th:text="${salary.getSenderName()}"></td>
+                                            <td th:text="${salary.getSenderAccountNumber()}"></td>
+                                            <td th:text="${salary.getReceiverName()}"></td>
+                                            <td th:text="${salary.getReceiverAccountNumber()}"></td>
+                                            <td th:text="${salary.getCurrency()}"></td>
+                                            <td th:text="${salary.getAmount()}"></td>
+                                            <td th:text="${salary.getPaymentState()}"></td>
+                                            <td th:text="${salary.getDateCreated()}"></td>
+                                            <td><a th:href="@{/view-salary/{id}(id=${salary.getId()})}" class="fa fa-eye text-success"></a></td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <!-- data table end -->
+            </div>
+        </div>
+    </div>
+    <!-- main content area end -->
+</div>
+<!-- page container area end -->
+
+<!-- jquery latest version -->
+<script src="/js/vendor/jquery-2.2.4.min.js"></script>
+<!-- bootstrap 4 js -->
+<script src="/js/popper.min.js"></script>
+<script src="/js/bootstrap.min.js"></script>
+<script src="/js/owl.carousel.min.js"></script>
+<script src="/js/metisMenu.min.js"></script>
+<script src="/js/jquery.slimscroll.min.js"></script>
+<script src="/js/jquery.slicknav.min.js"></script>
+
+<!--PDF | EXCEL EXPORT -->
+<script src="/js/export/buttons.html5.min.js"></script>
+<script src="/js/export/dataTables.buttons.min.js"></script>
+<script src="/js/export/datatables.min.js"></script>
+<script src="/js/export/jszip.min.js"></script>
+<script src="/js/export/pdfmake.min.js"></script>
+<script src="/js/export/vfs_fonts.js"></script>
+
+<!-- Start datatable js -->
+<script src="https://cdn.datatables.net/1.10.19/js/jquery.dataTables.js"></script>
+<script src="https://cdn.datatables.net/1.10.18/js/jquery.dataTables.min.js"></script>
+<script src="https://cdn.datatables.net/1.10.18/js/dataTables.bootstrap4.min.js"></script>
+<script src="https://cdn.datatables.net/responsive/2.2.3/js/dataTables.responsive.min.js"></script>
+<script src="https://cdn.datatables.net/responsive/2.2.3/js/responsive.bootstrap.min.js"></script>
+<!-- others plugins -->
+<script src="/js/plugins.js"></script>
+<script src="/js/scripts.js"></script>
+
+
+<!-- jQuery Library -->
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+
+<!-- Datatable JS | Export -->
+<script src="https://cdn.datatables.net/1.12.1/js/jquery.dataTables.min.js"></script>
+<script src="https://cdn.datatables.net/buttons/2.2.3/js/dataTables.buttons.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.1.3/jszip.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.1.53/pdfmake.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.1.53/vfs_fonts.js"></script>
+<script src="https://cdn.datatables.net/buttons/2.2.3/js/buttons.html5.min.js"></script>
+
+<script>
+    $(document).ready(function(){
+        var empDataTable = $('#salariesTable').DataTable({});
+
+    });
+</script>
+</body>
+
+</html>
